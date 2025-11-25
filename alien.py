@@ -9,7 +9,7 @@ class Alien(Sprite):
         self.frames = frames
         self.frame_no = 0
         self.anim_timer = 0
-        self.anim_speed = 0.10
+        self.anim_speed = 1
     def update(self):
         self.image = self.frames[self.frame_no]
         
