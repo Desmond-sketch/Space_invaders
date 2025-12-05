@@ -1,6 +1,9 @@
+import pygame
 from pygame.image import load
 from pygame.sprite import groupcollide
 import alien
+import random
+from bullet import Bullet
 
 
 all_frames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
@@ -66,5 +69,34 @@ def check_aliens_shot(bullets,aliens):
     for col in hits:
         points+=1
     return points
-            
-        
+def check_player_shot(bullets,players):
+    hits = groupcollide(bullets,players,True, True)
+    #points = 0
+    for col in hits:
+        return True
+    return False
+def draw_text(screen, text = "Hello world", text_size = 24, x = 0, y = 100, colour = (0, 250, 0)):
+    font = pygame.font.Font("assets/Fonts/PressStart2P-Regular.ttf", 24)
+    text_surface = font.render(text, True, colour)
+    screen.blit(text_surface, (x, y))
+
+def barricades_interaction(alien_bullets, player_bullets, barricades):
+    hits = groupcollide(alien_bullets,barricades,True, True)
+    hits = groupcollide(player_bullets,barricades,True, True)
+
+def When_aliens_shoot(aliens, upper_range = 100):
+    no_of_aliens = len(aliens)
+    chosen_alien = random.randint(0, no_of_aliens)
+    aliens_to_list = list(aliens)
+    count = 0
+    choice = random.randint(0, upper_range)
+    if choice == 0:
+        for i in range(no_of_aliens):
+            if i == chosen_alien:
+                bullet = Bullet(aliens_to_list[i].rect.x + 12, aliens_to_list[i].rect.y+12, 4,(255,0,0))
+                return bullet
+    return None         
+    
+
+
+

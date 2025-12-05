@@ -14,3 +14,8 @@ class Bullet(Sprite):
             self.kill()
         elif self.rect.y < -10:
             self.kill()
+
+
+
+
+    
