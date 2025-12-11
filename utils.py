@@ -4,8 +4,10 @@ from pygame.sprite import groupcollide
 import alien
 import random
 from bullet import Bullet
+pygame.mixer.init()
 
-
+all_sounds_dirs = ["Sounds/alienshoot1.wav", "Sounds/alienshoot2.wav", "Sounds/alienshoot2.wav", "Sounds/alienshoot3.wav", "Sounds/alienshoot3.wav", "Sounds/playerLaser.wav"]
+all_sounds = []
 all_frames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 assets_dir = "assets/"
 def load_frames():
@@ -37,7 +39,6 @@ def spawn_aliens(frames, no_of_rows, startx, starty, spawn_code = {"rows":{0:"al
 
     return spawned
 
-    
 
 
 def move_aliens(direction,aliens,movement_timer,world_bounds=[60,1180], speed = 1):
@@ -94,9 +95,18 @@ def When_aliens_shoot(aliens, upper_range = 100):
         for i in range(no_of_aliens):
             if i == chosen_alien:
                 bullet = Bullet(aliens_to_list[i].rect.x + 12, aliens_to_list[i].rect.y+12, 4,(255,0,0))
+                play_sounds(1)
                 return bullet
     return None         
-    
+
+def load_sounds():
+    for i in all_sounds_dirs:
+        sound = pygame.mixer.Sound(assets_dir + i)
+        all_sounds.append(sound)
+load_sounds()
+
+def play_sounds(index):
+    all_sounds[index].play()
 
 
 

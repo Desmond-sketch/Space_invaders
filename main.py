@@ -43,7 +43,7 @@ Barricades = barricade.make_word_from_font(
     start_x=100,
     start_y=450,
     font_size=200,
-    block_size=2,
+    block_size=4,
     block_gap=1,
     letter_gap=10,
     colour=(0, 255, 0)
@@ -63,6 +63,30 @@ def check_aliens_past_player(aliens, boundary):
             return True
     return False
 
+def reset():
+    global Game_Over, Lives, Barricades, Aliens, Points, PLAYER, Players
+    Lives = 3
+    for alien in Aliens:
+        alien.kill()
+        del alien
+    Aliens = pygame.sprite.Group()
+    respawn_aliens()
+    Points = 0
+    Barricades = barricade.make_word_from_font(
+        "XC7 Systems",
+        start_x=100,
+        start_y=450,
+        font_size=200,
+        block_size=4,
+        block_gap=1,
+        letter_gap=10,
+        colour=(0, 255, 0)
+    )
+    Game_Over = False
+    PLAYER = player.Player([ALL_FRAMES[7]], 620, 650)
+    Players.add(PLAYER)
+
+blink_timer = 10
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -78,9 +102,13 @@ while running:
             if  len(Bullets) == 0:
                 bullet = Bullet(PLAYER.rect.x + 12, PLAYER.rect.y, -10,(0,200,0))
                 Bullets.add(bullet)
+                utils.play_sounds(0)
                 Gun_cool = Rpm
         if Gun_cool > 0:
             Gun_cool -= 1
+    if keys[pygame.K_RETURN] and Game_Over:
+        reset()
+        print("reset")
     #if PLAYER.rect.x > SCREEN_SIZE[0]:
         #PLAYER.rect.x = 0
     #if PLAYER.rect.x < 0:
@@ -105,13 +133,14 @@ while running:
     Points += utils.check_aliens_shot(Bullets,Aliens)
     if(utils.check_player_shot(Alien_Bullets,Players) and PLAYER.rect.y <= 600 and not Game_Over):
         Lives -=1
-        
+        utils.play_sounds(-1)
         if Lives > 0:
             PLAYER = player.Player([ALL_FRAMES[7]], 620, 650)
             Players.add(PLAYER)
         
     aliens_past = check_aliens_past_player(Aliens, 600)
     if Lives < 1:
+        Game_Over = True
         utils.draw_text(screen, text = "GAME OVER", text_size = 1000, x = 500, y = 400)
     elif aliens_past:
         utils.draw_text(screen, text = "GAME OVER", text_size = 1000, x = 500, y = 400)
@@ -133,6 +162,14 @@ while running:
     utils.draw_text(screen, text = (f"Score : {Points}"), x = 0, y = 10, text_size = 16)
     utils.draw_text(screen, text = (f"Lives : {Lives}"), x = 1000, y = 10, text_size = 16)
     utils.barricades_interaction(Alien_Bullets, Bullets, Barricades)
+
+    if blink_timer > 0:
+        blink_timer -= 1
+
+    if blink_timer < 20 and Game_Over:
+        utils.draw_text(screen, text = "Press Enter to restart", text_size = 18, x = 300, y = 350)
+    if blink_timer == 0:
+        blink_timer = 30
     #text_score = Font_small.render(f"Score: {Points}", True, (0,250,0))
     #rect_score = text_score.get_rect()
     #screen.blit(text_score,rect_score)
